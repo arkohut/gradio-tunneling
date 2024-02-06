@@ -1,3 +1,21 @@
+# New way
+
+## Setup
+
+```sh
+pip install gradio-tunneling
+```
+
+## Run tunnel
+
+```sh
+gradio-tunneling --port 7860
+```
+
+----
+
+# Old way
+
 ## Setup
 
 ```sh
