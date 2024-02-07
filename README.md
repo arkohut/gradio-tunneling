@@ -1,5 +1,7 @@
 # New way
 
+https://github.com/arkohut/gradio-tunneling/assets/39525455/f38b7db2-517b-4e30-b15e-8787485095d0
+
 ## Setup
 
 ```sh
