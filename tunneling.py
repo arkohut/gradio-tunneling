@@ -172,7 +172,7 @@ if __name__ == '__main__':
     import time
 
     parser = argparse.ArgumentParser(description='Set up a tunnel.')
-    parser.add_argument('--port', type=int, default=8080, help='the port number to use for the tunnel.')
+    parser.add_argument('-p', '--port', type=int, default=8080, help='the port number to use for the tunnel.')
     args = parser.parse_args()
 
     address = setup_tunnel('0.0.0.0', args.port, secrets.token_urlsafe(32), None)
