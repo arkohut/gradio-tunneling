@@ -173,7 +173,12 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Set up a tunnel.')
     parser.add_argument('-p', '--port', type=int, default=8080, help='the port number to use for the tunnel.')
+    parser.add_argument('port_positional', type=int, nargs='?', help='the port number to use for the tunnel.')
     args = parser.parse_args()
+
+    # If the positional argument is provided, it overrides the -p/--port option
+    if args.port_positional is not None:
+        args.port = args.port_positional
 
     address = setup_tunnel('0.0.0.0', args.port, secrets.token_urlsafe(32), None)
 
