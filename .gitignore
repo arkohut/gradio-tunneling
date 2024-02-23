@@ -1,3 +1,4 @@
 dist/
 gradio_tunneling.egg-info/
 build/
+*.pyc
