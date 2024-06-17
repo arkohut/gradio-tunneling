@@ -12,7 +12,6 @@ setup(
     install_requires=[
         # List your dependencies here
         'requests',
-        'gradio',
         # 'some-other-package',
     ],
     entry_points={
