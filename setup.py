@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='gradio-tunneling',
-    version='0.4.0',
+    version='0.5.0',
     packages=find_packages(),
     package_data={
         'gradio_tunneling': ['frpc*'],
