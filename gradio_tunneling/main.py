@@ -142,7 +142,10 @@ class Tunnel:
 
 
 def setup_tunnel(
-    local_host: str, local_port: int, share_token: str, share_server_address: Optional[str]
+    local_host: str,
+    local_port: int,
+    share_token: str,
+    share_server_address: Optional[str],
 ) -> str:
     share_server_address = (
         GRADIO_SHARE_SERVER_ADDRESS
@@ -171,21 +174,40 @@ def main():
     import secrets
     import time
 
-    parser = argparse.ArgumentParser(description='Set up a tunnel.')
-    parser.add_argument('-p', '--port', type=int, default=8080, help='the port number to use for the tunnel.')
-    parser.add_argument('port_positional', type=int, nargs='?', help='the port number to use for the tunnel.')
+    parser = argparse.ArgumentParser(description="Set up a tunnel.")
+    parser.add_argument(
+        "-p",
+        "--port",
+        type=int,
+        default=8080,
+        help="the port number to use for the tunnel.",
+    )
+    parser.add_argument(
+        "port_positional",
+        type=int,
+        nargs="?",
+        help="the port number to use for the tunnel.",
+    )
+    parser.add_argument(
+        "--sd", "--subdomain", type=str, help="the subdomain to use for the tunnel."
+    )
     args = parser.parse_args()
 
     # If the positional argument is provided, it overrides the -p/--port option
     if args.port_positional is not None:
         args.port = args.port_positional
 
-    address = setup_tunnel('127.0.0.1', args.port, secrets.token_urlsafe(32), None)
+    address = setup_tunnel(
+        "127.0.0.1",
+        args.port,
+        secrets.token_urlsafe(32) if args.sd is None else args.sd,
+        None,
+    )
 
     print(f"公网访问地址：{address}")
     print("这个共享链接将在 72 小时后过期，此程序将在 72 小时后关闭。")
     time.sleep(3600 * 24 * 3)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
