@@ -1,5 +1,7 @@
 # Gradio 隧道工具
 
+一个反向代理隧道工具，可以为任何本地 Web 服务提供公网访问能力，支持自定义子域名功能。
+
 https://github.com/arkohut/gradio-tunneling/assets/39525455/f38b7db2-517b-4e30-b15e-8787485095d0
 
 [English](README.md) | 简体中文

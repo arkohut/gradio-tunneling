@@ -1,5 +1,7 @@
 # Gradio Tunneling
 
+A tunneling tool that provides reverse proxy functionality for non-Gradio web services, allowing you to expose your local services to the internet with customizable subdomains.
+
 https://github.com/arkohut/gradio-tunneling/assets/39525455/f38b7db2-517b-4e30-b15e-8787485095d0
 
 English | [简体中文](README_CN.md)
@@ -41,6 +43,7 @@ gradio-tunneling 7860 --sd mycustomsubdomain
 ### About Custom Subdomains
 
 When you use the `--sd` option:
+
 - The subdomain you provide won't be used directly in the URL
 - Instead, it will be converted into a unique string for security
 - If you use the same `--sd` value later, you'll get the same unique string
