@@ -1,10 +1,10 @@
 # Gradio 隧道工具
 
+[English](README.md) | 简体中文
+
 一个反向代理隧道工具，可以为任何本地 Web 服务提供公网访问能力，支持自定义子域名功能。
 
 https://github.com/arkohut/gradio-tunneling/assets/39525455/f38b7db2-517b-4e30-b15e-8787485095d0
-
-[English](README.md) | 简体中文
 
 ## 安装
 
@@ -17,9 +17,9 @@ pip install gradio-tunneling
 端口号可以通过以下两种方式指定：
 
 ```sh
-gradio-tunneling 7860 [--sd your-subdomain]
+gradio-tun 7860 [--sd your-subdomain]
 # 或者
-gradio-tunneling --port 7860 [--sd your-subdomain]
+gradio-tun --port 7860 [--sd your-subdomain]
 ```
 
 - `PORT` 或 `--port PORT`：指定隧道的端口号
@@ -29,13 +29,13 @@ gradio-tunneling --port 7860 [--sd your-subdomain]
 
 ```sh
 # 使用位置参数指定端口
-gradio-tunneling 7860
+gradio-tun 7860
 
 # 使用 --port 标志
-gradio-tunneling --port 7860
+gradio-tun --port 7860
 
 # 使用自定义子域名
-gradio-tunneling 7860 --sd mycustomsubdomain
+gradio-tun 7860 --sd mycustomsubdomain
 # 这将生成一个带有唯一字符串的 URL（例如 abc123def...）
 # 再次使用 "mycustomsubdomain" 将生成相同的唯一字符串
 ```

@@ -1,10 +1,10 @@
 # Gradio Tunneling
 
+English | [简体中文](README_CN.md)
+
 A tunneling tool that provides reverse proxy functionality for non-Gradio web services, allowing you to expose your local services to the internet with customizable subdomains.
 
 https://github.com/arkohut/gradio-tunneling/assets/39525455/f38b7db2-517b-4e30-b15e-8787485095d0
-
-English | [简体中文](README_CN.md)
 
 ## Setup
 
@@ -17,9 +17,9 @@ pip install gradio-tunneling
 You can specify the port in two ways:
 
 ```sh
-gradio-tunneling 7860 [--sd your-subdomain]
+gradio-tun 7860 [--sd your-subdomain]
 # or
-gradio-tunneling --port 7860 [--sd your-subdomain]
+gradio-tun --port 7860 [--sd your-subdomain]
 ```
 
 - `PORT` or `--port PORT`: Specify the port number for the tunnel
@@ -29,13 +29,13 @@ Examples:
 
 ```sh
 # Using positional port argument
-gradio-tunneling 7860
+gradio-tun 7860
 
 # Using --port flag
-gradio-tunneling --port 7860
+gradio-tun --port 7860
 
 # With custom subdomain
-gradio-tunneling 7860 --sd mycustomsubdomain
+gradio-tun 7860 --sd mycustomsubdomain
 # This will generate a URL with a unique string (e.g., abc123def...)
 # Using "mycustomsubdomain" again will generate the same unique string
 ```

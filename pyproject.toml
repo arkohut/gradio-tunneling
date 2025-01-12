@@ -16,6 +16,7 @@ classifiers = [
 ]
 
 [project.scripts]
+gradio-tun = "gradio_tunneling.main:main"
 gradio-tunneling = "gradio_tunneling.main:main"
 
 [tool.hatch.build]
