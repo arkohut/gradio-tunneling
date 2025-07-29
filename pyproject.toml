@@ -9,6 +9,9 @@ requires-python = ">=3.8"
 description = "A tool to help you expose your non gradio app using gradio"
 readme = "README.md"
 license = { file = "LICENSE" }
+dependencies = [
+    "requests",
+]
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: Apache Software License",
