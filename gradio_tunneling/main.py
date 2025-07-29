@@ -179,7 +179,6 @@ def main():
         "-p",
         "--port",
         type=int,
-        default=8080,
         help="the port number to use for the tunnel.",
     )
     parser.add_argument(
@@ -196,6 +195,10 @@ def main():
     # If the positional argument is provided, it overrides the -p/--port option
     if args.port_positional is not None:
         args.port = args.port_positional
+    
+    # Check if port is provided, if not, raise an error
+    if args.port is None:
+        parser.error("端口参数是必需的。请使用 -p/--port 参数或位置参数指定端口号。")
 
     address = setup_tunnel(
         "127.0.0.1",
