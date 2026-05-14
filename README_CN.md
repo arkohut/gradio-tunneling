@@ -8,8 +8,36 @@ https://github.com/arkohut/gradio-tunneling/assets/39525455/f38b7db2-517b-4e30-b
 
 ## 安装
 
+`gradio-tunneling` 是一个命令行工具，推荐使用 [`pipx`](https://pipx.pypa.io/) 或 [`uv tool`](https://docs.astral.sh/uv/guides/tools/) 安装到独立环境，这样 `gradio-tun` 命令会注册到 `PATH`，又不会污染你项目的虚拟环境。
+
 ```sh
+# 推荐：uv tool（速度快，已经在用 uv 的话零额外成本）
+uv tool install gradio-tunneling
+
+# 或者：pipx
+pipx install gradio-tunneling
+
+# 或者：直接 pip（也能用，但会装到当前环境里）
 pip install gradio-tunneling
+```
+
+后续升级：
+
+```sh
+uv tool upgrade gradio-tunneling
+# 或
+pipx upgrade gradio-tunneling
+```
+
+安装完成后，PATH 中会出现两个等价的命令：
+
+- `gradio-tun`：短名（本文档统一使用）
+- `gradio-tunneling`：长名，为兼容旧用法保留
+
+确认安装成功：
+
+```sh
+gradio-tun --help
 ```
 
 ## 运行隧道

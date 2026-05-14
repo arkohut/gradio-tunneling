@@ -8,8 +8,36 @@ https://github.com/arkohut/gradio-tunneling/assets/39525455/f38b7db2-517b-4e30-b
 
 ## Setup
 
+Since `gradio-tunneling` is a CLI tool, installing it into an isolated environment with [`pipx`](https://pipx.pypa.io/) or [`uv tool`](https://docs.astral.sh/uv/guides/tools/) is recommended — it keeps the `gradio-tun` command on your `PATH` without touching your project venvs.
+
 ```sh
+# Recommended: uv tool (fast, no extra setup if you already use uv)
+uv tool install gradio-tunneling
+
+# Or: pipx
+pipx install gradio-tunneling
+
+# Or: plain pip (works fine, but pollutes the current environment)
 pip install gradio-tunneling
+```
+
+To upgrade later:
+
+```sh
+uv tool upgrade gradio-tunneling
+# or
+pipx upgrade gradio-tunneling
+```
+
+Once installed, two equivalent commands are available on your `PATH`:
+
+- `gradio-tun` — short form (used throughout this README)
+- `gradio-tunneling` — long form, kept for backward compatibility
+
+Verify it's reachable:
+
+```sh
+gradio-tun --help
 ```
 
 ## Run tunnel
