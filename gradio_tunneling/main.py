@@ -238,20 +238,32 @@ def setup_tunnel(
 def main():
     import argparse
     import secrets
-    import time
-
+    def valid_port(value: str) -> int:
+        """验证端口号是否在有效范围内（1-65535）"""
+        try:
+            port = int(value)
+        except ValueError:
+            raise argparse.ArgumentTypeError(
+                f"端口必须是整数，当前值: '{value}'"
+            )
+        if not (1 <= port <= 65535):
+            raise argparse.ArgumentTypeError(
+                f"端口必须在 1-65535 之间，当前: {port}"
+            )
+        return port
+        
     parser = argparse.ArgumentParser(description="Set up a tunnel.")
     parser.add_argument(
         "-p",
         "--port",
-        type=int,
-        help="the port number to use for the tunnel.",
+        type=valid_port,
+        help="the port number to use for the tunnel (1-65535).",
     )
     parser.add_argument(
         "port_positional",
-        type=int,
+        type=valid_port,
         nargs="?",
-        help="the port number to use for the tunnel.",
+        help="the port number to use for the tunnel (1-65535).",
     )
     parser.add_argument(
         "--sd", "--subdomain", type=str, help="the subdomain to use for the tunnel."
