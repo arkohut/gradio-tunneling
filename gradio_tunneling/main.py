@@ -251,7 +251,7 @@ def main():
                 f"端口必须在 1-65535 之间，当前: {port}"
             )
         return port
-        
+
     parser = argparse.ArgumentParser(description="Set up a tunnel.")
     parser.add_argument(
         "-p",
