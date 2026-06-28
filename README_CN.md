@@ -6,6 +6,16 @@
 
 https://github.com/arkohut/gradio-tunneling/assets/39525455/f38b7db2-517b-4e30-b15e-8787485095d0
 
+## 配合 AI 编程助手使用
+
+本仓库内置了一个 [agent skill](https://agentskills.io/)，位于 [`.agents/skills/gradio-tunneling/`](.agents/skills/gradio-tunneling/SKILL.md)。支持 Agent Skills 标准的 AI 编程助手（pi 等）可以直接按你的要求自动开隧道——只需说“把 7860 端口暴露到公网”。skill 自带辅助脚本：后台启动隧道、等待公网 URL 就绪、事后一键停止：
+
+```sh
+bash .agents/skills/gradio-tunneling/scripts/tunnel.sh 7860            # 输出 PUBLIC_URL=...
+bash .agents/skills/gradio-tunneling/scripts/tunnel.sh 7860 myapp      # 附带子域名
+bash .agents/skills/gradio-tunneling/scripts/tunnel.sh --stop 7860
+```
+
 ## 安装
 
 `gradio-tunneling` 是一个命令行工具，推荐使用 [`pipx`](https://pipx.pypa.io/) 或 [`uv tool`](https://docs.astral.sh/uv/guides/tools/) 安装到独立环境，这样 `gradio-tun` 命令会注册到 `PATH`，又不会污染你项目的虚拟环境。

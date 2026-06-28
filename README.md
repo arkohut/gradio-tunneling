@@ -8,6 +8,16 @@ A tunneling tool that provides reverse proxy functionality for non-Gradio web se
 
 https://github.com/arkohut/gradio-tunneling/assets/39525455/f38b7db2-517b-4e30-b15e-8787485095d0
 
+## Use with AI coding agents
+
+This repo ships an [agent skill](https://agentskills.io/) at [`.agents/skills/gradio-tunneling/`](.agents/skills/gradio-tunneling/SKILL.md) so AI coding agents (pi, and others that support the Agent Skills standard) can set up tunnels for you on request — just say "expose port 7860" / “内网穿透 7860". It includes a helper script that starts the tunnel in the background, waits for the public URL, and stops it later:
+
+```sh
+bash .agents/skills/gradio-tunneling/scripts/tunnel.sh 7860            # prints PUBLIC_URL=...
+bash .agents/skills/gradio-tunneling/scripts/tunnel.sh 7860 myapp      # with subdomain
+bash .agents/skills/gradio-tunneling/scripts/tunnel.sh --stop 7860
+```
+
 ## Setup
 
 Requires Python 3.8 or higher.
