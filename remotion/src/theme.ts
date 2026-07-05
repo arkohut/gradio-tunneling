@@ -17,5 +17,4 @@ export const theme = {
   accent: '#ff7c00', // gradio orange
   green: '#3fb950',
   red: '#f85149',
-  blue: '#58a6ff',
 };

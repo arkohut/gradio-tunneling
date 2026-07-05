@@ -10,6 +10,7 @@ const CLOUD_LEFT = 1240;
 const WALL_X = 800;
 const TUNNEL_Y = CY + 240; // below the firewall
 const TUNNEL_D = `M ${COMP_RIGHT} ${CY} L ${COMP_RIGHT} ${TUNNEL_Y} L ${CLOUD_LEFT} ${TUNNEL_Y} L ${CLOUD_LEFT} ${CY}`;
+const TUNNEL_LEN = 1360; // 240 + 880 + 240, the length of TUNNEL_D
 
 export const Diagram: React.FC<{connected: boolean; progress?: number}> = ({
   connected,
@@ -26,8 +27,8 @@ export const Diagram: React.FC<{connected: boolean; progress?: number}> = ({
             strokeWidth={5}
             strokeLinecap="round"
             strokeLinejoin="round"
-            strokeDasharray={2400}
-            strokeDashoffset={interpolate(progress, [0, 1], [2400, 0])}
+            strokeDasharray={TUNNEL_LEN}
+            strokeDashoffset={interpolate(progress, [0, 1], [TUNNEL_LEN, 0])}
           />
         ) : (
           <line
