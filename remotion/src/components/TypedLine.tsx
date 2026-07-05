@@ -18,8 +18,7 @@ export const TypedLine: React.FC<{
   const shown = Math.min(text.length, Math.floor(elapsed * charsPerFrame));
   const done = shown >= text.length;
   const started = frame >= start;
-  const blinkOn = Math.floor(frame / 15) % 2 === 0;
-  const showCursor = cursor && started && (!done || blinkOn);
+  const showCursor = cursor && started && !done;
 
   if (!started) {
     return <div style={{color, whiteSpace: 'pre-wrap'}}>{prompt ? <Prompt>{prompt}</Prompt> : null}</div>;

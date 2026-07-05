@@ -1,8 +1,8 @@
 import {loadFont as loadMono} from '@remotion/google-fonts/JetBrainsMono';
 import {loadFont as loadSans} from '@remotion/google-fonts/Inter';
 
-export const {fontFamily: monoRaw} = loadMono();
-export const {fontFamily: sansRaw} = loadSans();
+export const {fontFamily: monoRaw} = loadMono('normal', {weights: ['400', '700'], subsets: ['latin']});
+export const {fontFamily: sansRaw} = loadSans('normal', {weights: ['400', '600', '700', '800'], subsets: ['latin']});
 
 export const monoFont = `${monoRaw}, ui-monospace, monospace`;
 export const sansFont = `${sansRaw}, system-ui, sans-serif`;
