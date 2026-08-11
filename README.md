@@ -1,3 +1,5 @@
+
+
 # Gradio Tunneling
 
 English | [简体中文](README_CN.md)
@@ -7,6 +9,8 @@ A tunneling tool that provides reverse proxy functionality for non-Gradio web se
 https://github.com/arkohut/gradio-tunneling/assets/39525455/f38b7db2-517b-4e30-b15e-8787485095d0
 
 ## Setup
+
+Requires Python 3.8 or higher.
 
 Since `gradio-tunneling` is a CLI tool, installing it into an isolated environment with [`pipx`](https://pipx.pypa.io/) or [`uv tool`](https://docs.astral.sh/uv/guides/tools/) is recommended — it keeps the `gradio-tun` command on your `PATH` without touching your project venvs.
 
