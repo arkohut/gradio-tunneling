@@ -1,15 +1,18 @@
 ---
 name: gradio-tunneling
-description: Expose a local port to a public HTTPS URL using the gradio-tun CLI (frpc-based reverse tunnel through Gradio's share servers). Use when the user wants to put localhost on the internet, share a local web app (Gradio, Streamlit, FastAPI, Vite/Next dev server, ComfyUI, Jupyter) with other people, get a public URL for testing external webhook callbacks (Stripe, GitHub, WeChat), demo from a laptop, or mentions tunnel / tunneling / public URL / 内网穿透 / 公网地址 / 公网访问 / 把本地服务分享出去. Covers install, background start, URL extraction, deterministic subdomains, and the 72-hour expiry.
+description: Expose a local port to a public HTTPS URL using the gradio-tun CLI (frpc-based reverse tunnel through Gradio's share servers). Use when the user wants to put localhost on the internet, share a local web app of any stack (FastAPI, Vite/Next, Streamlit, ComfyUI, Jupyter, or Gradio — no Gradio app or setup required) with other people, get a public URL for testing external webhook callbacks (Stripe, GitHub, WeChat), demo from a laptop, or mentions tunnel / tunneling / public URL / 内网穿透 / 公网地址 / 公网访问 / 把本地服务分享出去. Covers install, background start, URL extraction, deterministic subdomains, and the 72-hour expiry.
 ---
 
 # gradio-tunneling
 
 Turn any local HTTP service into a public `https://*.gradio.live` URL with one command. No account, no config, no server needed.
 
+**Gradio is only the tunnel infrastructure.** The service being shared does NOT need to be a Gradio app — it can be anything that speaks HTTP on a port. Never scaffold a Gradio app, wrap the service in one, or modify the service just to share it: expose the port it already listens on and leave the service untouched.
+
 ## When to use
 
 - User wants a public URL for something running on localhost (any HTTP service on any port)
+- Explicitly NOT for: creating, scaffolding, or converting anything to a Gradio app. Gradio only hosts the share servers being borrowed as tunnel infrastructure.
 - Sharing a local app/demo with teammates or users outside the LAN
 - Testing external webhook callbacks (payment providers, GitHub webhooks, OAuth redirects) against a local dev server
 - Keywords: tunnel, expose port, public URL, share local app, 内网穿透, 公网地址, 公网访问
