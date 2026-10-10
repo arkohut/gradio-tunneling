@@ -3,6 +3,7 @@ import hashlib
 import os
 import platform
 import re
+import signal
 import stat
 import subprocess
 import sys
@@ -86,7 +87,7 @@ class Tunnel:
     def download_binary():
         if not Path(BINARY_PATH).exists():
             Path(BINARY_FOLDER).mkdir(parents=True, exist_ok=True)
-            resp = requests.get(BINARY_URL)
+            resp = requests.get(BINARY_URL, timeout=120)
 
             if resp.status_code == 403:
                 raise OSError(
@@ -97,16 +98,30 @@ class Tunnel:
             resp.raise_for_status()
 
             # Save file data to local copy
-            with open(BINARY_PATH, "wb") as file:
-                file.write(resp.content)
-            st = os.stat(BINARY_PATH)
-            os.chmod(BINARY_PATH, st.st_mode | stat.S_IEXEC)
+            try:
+                with open(BINARY_PATH, "wb") as file:
+                    file.write(resp.content)
+                st = os.stat(BINARY_PATH)
+                os.chmod(BINARY_PATH, st.st_mode | stat.S_IEXEC)
+            except OSError as e:
+                raise OSError(
+                    f"Cannot set up a share link: failed to save the frpc "
+                    f"binary to {BINARY_PATH}: {e}"
+                ) from e
 
             if BINARY_URL in CHECKSUMS:
                 sha = hashlib.sha256()
-                with open(BINARY_PATH, "rb") as f:
-                    for chunk in iter(lambda: f.read(CHUNK_SIZE * sha.block_size), b""):
-                        sha.update(chunk)
+                try:
+                    with open(BINARY_PATH, "rb") as f:
+                        for chunk in iter(
+                            lambda: f.read(CHUNK_SIZE * sha.block_size), b""
+                        ):
+                            sha.update(chunk)
+                except OSError as e:
+                    raise OSError(
+                        f"Cannot set up a share link: failed to verify the frpc "
+                        f"binary at {BINARY_PATH}: {e}"
+                    ) from e
                 calculated_hash = sha.hexdigest()
 
                 if calculated_hash != CHECKSUMS[BINARY_URL]:
@@ -212,7 +227,7 @@ def setup_tunnel(
         else share_server_address
     )
     if share_server_address is None:
-        response = requests.get(GRADIO_API_SERVER)
+        response = requests.get(GRADIO_API_SERVER, timeout=30)
         if not (response and response.status_code == 200):
             raise RuntimeError("Could not get share link from Gradio API Server.")
         payload = response.json()[0]
@@ -278,6 +293,18 @@ def main():
     if args.port is None:
         parser.error("端口参数是必需的。请使用 -p/--port 参数或位置参数指定端口号。")
 
+    # atexit handlers do not run on SIGTERM (the default `kill`), which used to
+    # orphan the frpc child process. Clean up tunnels explicitly instead.
+    def _terminate(signum, frame):
+        for tunnel in CURRENT_TUNNELS:
+            tunnel.kill()
+        sys.exit(0)
+
+    try:
+        signal.signal(signal.SIGTERM, _terminate)
+    except (ValueError, OSError):
+        pass
+
     address = setup_tunnel(
         "127.0.0.1",
         args.port,
@@ -285,8 +312,10 @@ def main():
         None,
     )
 
-    print(f"公网访问地址：{address}")
-    print("这个共享链接将在 72 小时后过期，此程序将在 72 小时后关闭。")
+    # flush=True: stdout is block-buffered when redirected to a file, and the
+    # URL line would otherwise stay stuck in the buffer for the whole 72h sleep.
+    print(f"公网访问地址：{address}", flush=True)
+    print("这个共享链接将在 72 小时后过期，此程序将在 72 小时后关闭。", flush=True)
     time.sleep(3600 * 24 * 3)
 
 
