@@ -28,14 +28,26 @@ Verify with `gradio-tun --help`. First tunnel start also downloads the `frpc` bi
 
 ⚠️ **Critical: `gradio-tun` never exits on its own.** After printing the URL it sleeps for 72 hours, so it MUST run in the background with output redirected to a log file. Never run it in the foreground of a shell command — it will block until timeout.
 
-Also export `PYTHONUNBUFFERED=1`, otherwise the URL line stays stuck in Python's stdout buffer when redirected to a file and never reaches the log.
+Prefer the bundled helper script: it backgrounds the CLI, waits for the URL, prints `PUBLIC_URL=...`, and stops cleanly on any installed version.
+
+```sh
+bash "$(dirname "$SKILL_PATH")/scripts/tunnel.sh" 7860            # prints PUBLIC_URL=...
+bash "$(dirname "$SKILL_PATH")/scripts/tunnel.sh" 7860 myapp      # with subdomain
+bash "$(dirname "$SKILL_PATH")/scripts/tunnel.sh" --stop 7860
+```
+
+(Resolve `SKILL_PATH` against this skill's directory: `.agents/skills/gradio-tunneling`.)
+
+Manual equivalent (what the script does):
 
 ```sh
 # 1. The local service must already be listening on the port
 curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:7860/   # expect 2xx/3xx (or at least a response)
 
 # 2. Start the tunnel in the background
-export PYTHONUNBUFFERED=1
+#    gradio-tunneling <0.9.1: also `export PYTHONUNBUFFERED=1` first, or the
+#    URL line stays stuck in Python's stdout buffer and never reaches the log
+#    (fixed in 0.9.1, which prints with flush=True).
 nohup gradio-tun 7860 >/tmp/gradio-tun.log 2>&1 &
 echo $! >/tmp/gradio-tun.pid
 
@@ -50,20 +62,12 @@ echo "$URL"   # e.g. https://a1b2c3d4e5f6.gradio.live
 # 4. Verify end-to-end
 curl -s -o /dev/null -w '%{http_code}' "$URL"
 
-# 5. Stop it when done — kill the wrapper AND any frpc child
+# 5. Stop it when done
 kill "$(cat /tmp/gradio-tun.pid)"
-pkill -f "frpc.* -l 7860" 2>/dev/null || true
+# gradio-tunneling <0.9.1 only: killing the wrapper orphans the frpc child
+# (SIGTERM skips Python's atexit). Also run: pkill -f "frpc.* -l 7860"
+# (fixed in 0.9.1, which terminates its frpc child on SIGTERM).
 ```
-
-Or use the bundled helper, which does steps 2–4 and handles restart/stop:
-
-```sh
-bash "$(dirname "$SKILL_PATH")/scripts/tunnel.sh" 7860            # prints PUBLIC_URL=...
-bash "$(dirname "$SKILL_PATH")/scripts/tunnel.sh" 7860 myapp      # with subdomain
-bash "$(dirname "$SKILL_PATH")/scripts/tunnel.sh" --stop 7860
-```
-
-(Resolve `SKILL_PATH` against this skill's directory: `.agents/skills/gradio-tunneling`.)
 
 ## CLI reference
 
@@ -83,7 +87,7 @@ Both `gradio-tun` and `gradio-tunneling` invoke the same entry point.
 
 - **72-hour expiry.** The URL dies and the process exits after 72h. Restart the tunnel to get a new URL; with a fixed `--sd` the new URL keeps the same subdomain.
 - **The URL line is printed in Chinese:** `公网访问地址：https://....gradio.live`. When parsing output, match `公网访问地址` or the first `https://` URL — don't assume an English label.
-- **Killing the wrapper does not kill the frpc child.** SIGTERM skips Python's atexit, so an orphaned `frpc` process keeps the proxy registered server-side. Always follow up with `pkill -f "frpc.* -l PORT"` (the bundled script does this for you).
+- **Killing the wrapper does not kill the frpc child** on gradio-tunneling <0.9.1: SIGTERM skips Python's atexit, so an orphaned `frpc` process keeps the proxy registered server-side. Always follow up with `pkill -f "frpc.* -l PORT"` (the bundled script does this for you). Fixed in 0.9.1: the CLI terminates its frpc child on SIGTERM, so a plain `kill` is enough.
 - **One proxy per `--sd` name at a time.** Starting a second tunnel with the same `--sd` while the old frpc is still alive fails with `new proxy ... error`. Kill the old tunnel first, wait a couple of seconds, retry.
 - **502 from the tunnel** almost always means nothing is listening on the local port (or it listens on a different interface). Fix the local service, not the tunnel.
 - **Login/proxy errors from frpc** in the log mean the share server is unreachable or the platform binary is missing. Check network access; unsupported platforms get a 403 at binary download.

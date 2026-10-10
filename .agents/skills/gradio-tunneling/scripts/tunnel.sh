@@ -1,58 +1,48 @@
 # Starts a gradio-tun tunnel in the background and prints the public URL.
-# Usage: tunnel.sh PORT [SUBDOMAIN]
-# Kill the tunnel later with: tunnel.sh --stop PORT
+# Usage: tunnel.sh PORT [SUBDOMAIN] | tunnel.sh --stop PORT
+#
+# gradio-tunneling >= 0.9.1 flushes the URL line itself and terminates its
+# frpc child on SIGTERM. The PYTHONUNBUFFERED export and frpc pkill below
+# are kept so the script also works against older installed versions.
 set -euo pipefail
 
 ACTION="${1:-}"
 LOG_DIR="${TMPDIR:-/tmp}"
 
-stop_tunnel() {
+kill_port_tunnels() {
   local port="$1"
   local pidfile="$LOG_DIR/gradio-tun-$port.pid"
-  # Kill the wrapper first, then any orphaned frpc child still bound to this port
-  # (killing the wrapper alone does NOT stop frpc: SIGTERM skips Python's atexit).
   if [[ -f "$pidfile" ]] && kill -0 "$(cat "$pidfile")" 2>/dev/null; then
     kill "$(cat "$pidfile")" 2>/dev/null || true
   fi
   pkill -f "gradio-tun(-neling)? $port( |$)" 2>/dev/null || true
-  pkill -f "frpc.* -l $port" 2>/dev/null || true
+  pkill -f "frpc.* -l $port" 2>/dev/null || true # orphaned frpc child from <=0.9.0
   rm -f "$pidfile"
-  echo "Stopped tunnel on port $port."
 }
 
 if [[ "$ACTION" == "--stop" ]]; then
   [[ $# -ge 2 ]] || { echo "Usage: tunnel.sh --stop PORT" >&2; exit 1; }
-  stop_tunnel "$2"
+  kill_port_tunnels "$2"
+  echo "Stopped tunnel on port $2."
   exit 0
 fi
 
-PORT="$ACTION"
-SD="${2:-}"
+PORT="$ACTION" SD="${2:-}"
 [[ -n "$PORT" ]] || { echo "Usage: tunnel.sh PORT [SUBDOMAIN] | tunnel.sh --stop PORT" >&2; exit 1; }
 
-if ! command -v gradio-tun >/dev/null 2>&1; then
+command -v gradio-tun >/dev/null 2>&1 || {
   echo "gradio-tun not found. Install it first with one of:" >&2
   echo "  uv tool install gradio-tunneling" >&2
   echo "  pipx install gradio-tunneling" >&2
   echo "  pip install gradio-tunneling" >&2
   exit 1
-fi
+}
 
-# The CLI blocks for 72h after printing the URL, and Python buffers stdout when
-# redirected — force unbuffered output so the URL lands in the log immediately.
-export PYTHONUNBUFFERED=1
-
+export PYTHONUNBUFFERED=1 # <=0.9.0 buffers the URL line when stdout is redirected
 LOG="$LOG_DIR/gradio-tun-$PORT.log"
 PIDFILE="$LOG_DIR/gradio-tun-$PORT.pid"
 
-# Stop a previous tunnel on the same port: wrapper AND its frpc child
-# (same-name proxies conflict server-side if the old frpc survives).
-if [[ -f "$PIDFILE" ]] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
-  kill "$(cat "$PIDFILE")" 2>/dev/null || true
-fi
-pgrep -f "gradio-tun(-neling)? $PORT( |$)" >/dev/null 2>&1 && \
-  pkill -f "gradio-tun(-neling)? $PORT( |$)" 2>/dev/null || true
-pkill -f "frpc.* -l $PORT" 2>/dev/null || true
+kill_port_tunnels "$PORT" # same-port/-sd restarts conflict server-side if the old frpc survives
 sleep 2
 
 if [[ -n "$SD" ]]; then
